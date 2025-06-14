@@ -1,0 +1,13 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  display: block;
+}
+
+@font-face {
+  font-family: 'Ownglyph'; /* 원하는 이름 */
+  src: url('assets/온글잎 류류체.ttf');
+}
