@@ -515,7 +515,7 @@ function draw() {
     if (currentIndex == 0 && showStartGuide && !showQRCanvas) {
     fill(255);
     textSize(70);
-    text("주먹을 쥐었다 피면서 글자를 찍어보세요!", width / 2, 300);
+    text("주먹을 쥐었다 피면서 글자를 찍어보세요!", width / 2, 200);
 
     if (guideStartTime == 0) {
       guideStartTime = second();
@@ -751,22 +751,35 @@ for (let obj of letters) {
     if(finishStage0 && (textTime < second()) && (second() < (textTime + 5)) && !showQRCanvas){
       fill(255);
       textSize(80);
-      text("손을 흔들어보세요!", 640, 300);
+      text("손을 자모 위로 천천히 지나가보세요!", 640, 200);
     }
     if(finishStage1 && (textTime1 < second()) && (second() < (textTime1 + 5)) && !showQRCanvas){
       fill(255);
       textSize(80);
-      text("손을 흔들어보세요!", 640, 300);
+      text("한번 더 지나가보세요!", 640, 200);
     }
 
 
 
   if (page === 8 && finishStage1 && !qrGenerated && !showQRCanvas) {
     fill(255);
-    textSize(36);
+    textSize(100);
     textAlign(CENTER, CENTER);
-    text("QR로 내 숲 저장하기!", width / 2, height - 200);
+    text("QR로 내 숲 저장하기!", width / 2, height - 100);
+    
   }
+    if(showQRCanvas){
+      //페이지 9 하단에 이름 + 날짜 출력
+      fill(255);
+      textSize(100);
+      textAlign(CENTER, BOTTOM);
+
+      // 날짜 정보 세팅 (미리 한 번 선언 필요)
+      let today2 = new Date();
+      let currentDateString = today2.getFullYear() + "." + nf(today2.getMonth() + 1, 2) + "." + nf(today2.getDate(), 2);
+
+      text(userName + "의 한글숲 - " + currentDateString, width / 2, height - 20);
+    }
 
     if(showQRCanvas){
       uploadCanvasAndMakeQR();
@@ -964,8 +977,8 @@ if (page === 8) {
   //qr생성
     if (
     page === 8 && finishStage1 && !qrGenerated &&
-    mouseX > width / 2 - 200 && mouseX < width / 2 + 200 &&
-    mouseY > height - 240 && mouseY < height - 160
+    mouseX > width / 2 - 360 && mouseX < width / 2 + 360 &&
+    mouseY > height - 150 && mouseY < height - 50
   ) {
     showQRCanvas = true;
   }
