@@ -106,6 +106,8 @@ let exportCanvas;
 let numDots = 10;
 let angleOffset = 0;
 
+let capturedImage;
+
 const CHOSUNG = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 const JUNGSUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
 const JONGSUNG = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
@@ -533,12 +535,13 @@ function draw() {
       textTime = 0;
       getFinishStage0 = false;
     }
-
+/*
     if(finishStage0 && (textTime < second()) && (second() < (textTime + 5)) && !showQRCanvas){
       fill(255);
       textSize(80);
       text("손을 흔들어보세요!", 640, 300);
     }
+*/
 
     let count = 0;
     if(!finishStage1){
@@ -559,12 +562,13 @@ function draw() {
         getFinishStage1 = false;
       }
     }
-
+/*
     if(finishStage1 && (textTime1 < second()) && (second() < (textTime1 + 5)) && !showQRCanvas){
       fill(255);
       textSize(80);
       text("손을 흔들어보세요!", 640, 300);
     }
+*/
     
     if (hands.length > 0) {
       let hand = hands[0];
@@ -606,13 +610,14 @@ function draw() {
 
   wasFist = isFist;
 }
-
+/*
   if (page === 8 && finishStage1 && !qrGenerated && !showQRCanvas) {
     fill(255);
     textSize(36);
     textAlign(CENTER, CENTER);
     text("QR로 내 숲 저장하기!", width / 2, height - 200);
   }
+*/
 
   // QR 표시
   if (qrGenerated && qrCanvas) {
@@ -740,6 +745,27 @@ for (let obj of letters) {
         pop();
       }
     }
+
+    if(finishStage0 && (textTime < second()) && (second() < (textTime + 5)) && !showQRCanvas){
+      fill(255);
+      textSize(80);
+      text("손을 흔들어보세요!", 640, 300);
+    }
+    if(finishStage1 && (textTime1 < second()) && (second() < (textTime1 + 5)) && !showQRCanvas){
+      fill(255);
+      textSize(80);
+      text("손을 흔들어보세요!", 640, 300);
+    }
+
+
+
+  if (page === 8 && finishStage1 && !qrGenerated && !showQRCanvas) {
+    fill(255);
+    textSize(36);
+    textAlign(CENTER, CENTER);
+    text("QR로 내 숲 저장하기!", width / 2, height - 200);
+  }
+
     if(showQRCanvas){
       uploadCanvasAndMakeQR();
       page++;
@@ -784,6 +810,9 @@ for (let obj of letters) {
       let currentDateString = today2.getFullYear() + "." + nf(today2.getMonth() + 1, 2) + "." + nf(today2.getDate(), 2);
 
       text(userName + "의 한글숲 - " + currentDateString, width / 2, height - 20);
+
+      // 이미지 띄우기
+      image(capturedImage,width/2 - 150,10,300,225);
 
       if (qrGenerated && qrCanvas) {
         fill(50, 168, 82);
@@ -1155,6 +1184,8 @@ function uploadCanvasAndMakeQR() {
     console.error("🚨 캔버스를 찾을 수 없습니다.");
     return;
   }
+
+  capturedImage = get();
 
   myCanvas.elt.toBlob(blob => {
     const formData = new FormData();
