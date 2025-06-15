@@ -385,14 +385,18 @@ function draw() {
 
   else if(page === 6){
     image(namewithbutton, 0, 0, width, height);
+    textSize(55);
+    text("한글만 입력해주세요!", 250,500);
+    textSize(40);
+    text("두 세 글자를 추천합니다 :)", 900,600);
     
     if (!input) {
       input = createInput();
-      input.size(300, 40);
-      input.position((width - 300) / 2, height / 2 + 50);  // 완전 중앙
+      input.size(200, 40);
+      input.position((width - 150) / 2, height / 2 + 50);  // 완전 중앙
       
-      input.style('background-color', 'transparent'); 
-      input.style('color', 'rgba(255, 255, 255,0.9)');                    
+      input.style('background-color', 'white'); 
+      input.style('color', 'rgba(49, 98, 0, 0.9)');                    
       input.style('border', 'none');
       input.style('border-radius', '10px');               
       input.style('padding', '5px 10px');
@@ -404,6 +408,14 @@ function draw() {
       input.input(() => {
         userName = input.value();
       });
+      
+      input.mouseOver(() => {
+      input.style('background-color', '#FFFF99'); // 연노란색
+    });
+
+    input.mouseOut(() => {
+      input.style('background-color', 'white');
+    });
 
     }
 
