@@ -1,6 +1,7 @@
 let first;
 let img2;
 let img3;
+let img4;
 let imgLeaves;
 let butter;
 
@@ -170,6 +171,7 @@ function preload() {
   first = loadImage('assets/first.png');
   img2 = loadImage('assets/이름.png');
   img3 = loadImage('assets/분위기.png');
+  img4 = loadImage('assets/블러배경.png');
   imgLeaves = loadImage("assets/leaves.png");
   imgStar = loadImage("assets/star.png");
   butter = loadImage("assets/butter.png");
@@ -771,11 +773,10 @@ for (let obj of letters) {
       page++;
     }
   } else if(page === 9){
-    background(240);
-
+    image( img4, 0, 0, width, height);
 
     if(!qrGenerated){
-      background(240);
+      
       fill(0);
       textSize(70);
       text("로딩 중", width / 2, 300);
