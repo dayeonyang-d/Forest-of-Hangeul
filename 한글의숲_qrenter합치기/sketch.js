@@ -4,11 +4,12 @@ let img3;
 let imgLeaves;
 let butter;
 
+let squirrel;
+
 let howto1withbutton;
 let howto2withbutton;
 let howto3withbutton;
 let howto4withbutton;
-let howto5withbutton;
 
 let gobackbutton;
 let enterbutton;
@@ -32,6 +33,8 @@ let birdOffset = 0;
 
 let showStartGuide = true;
 let guideStartTime = 0;
+
+let showQRCanvas = false;
 
 let imgEffect;
 let imgFade;
@@ -77,6 +80,7 @@ let letterImages2 = {};
 
 let lastAddedTime = 0;
 let lastAddedTime1 = 0;
+let time = 2000;
 
 let finishStage0 = false;
 let finishStage1 = false;
@@ -98,6 +102,9 @@ let saveQRButton = null;
 let qrCanvas = null;
 let qrGenerated = false;
 let exportCanvas;
+
+let numDots = 10;
+let angleOffset = 0;
 
 const CHOSUNG = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 const JUNGSUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
@@ -137,9 +144,25 @@ const charToIndex = {
   'ㅏ': 15, 'ㅐ': 16, 'ㅑ': 17, 'ㅒ': 18, 'ㅓ': 19, 'ㅔ': 20,
   'ㅕ': 21, 'ㅖ': 22, 'ㅗ': 23, 'ㅛ': 24, 'ㅜ': 25, 'ㅠ': 26, 'ㅡ': 27, 'ㅣ': 28
 };
-
+let showCongratsOnce = true;
 let fingerNight
 let finger
+
+let currentLine = 0;
+let lastTime = 0;
+
+// let tutorialTexts = [
+//   "1. 이름을 한글로 입력해요.",
+//   "2. 카메라에 손을 비추면, 손을 인식해요.",
+//   "3. 주먹을 쥐었다 펴면, 자모가 하나씩 화면에 나타나요.",
+//   "4. 손이 자모 위를 지나가면, 자연의 모습으로 변해요.",
+//   "5. 한 번 더 손을 올리면, 아름다운 효과가 펼쳐져요.",
+//   "6. 완성된 한글숲은 QR로 저장할 수 있어요.",
+//   "7. 이름 속 한글의 아름다움, 소중히 간직해요.",
+//   "8. 설명 끝! 이제 다음 화면으로 넘어가보세요~"
+// ];
+
+
 function preload() {
 
   first = loadImage('assets/first.png');
@@ -149,6 +172,7 @@ function preload() {
   imgStar = loadImage("assets/star.png");
   butter = loadImage("assets/butter.png");
 
+  squirrel = loadImage("assets/squirrelMouseover.png");
   imgEffect = loadImage('assets/effect.png');
   butterflyImg = loadImage('assets/butterfly.png');
 
@@ -156,14 +180,11 @@ function preload() {
   howto2withbutton= loadImage('assets/howto2.png');
   howto3withbutton= loadImage('assets/howto3.png');
   howto4withbutton= loadImage('assets/howto4.png');
-  howto5withbutton= loadImage('assets/howto5.png');
   
   gobackbutton = loadImage('assets/gobackbutton.png');
   enterbutton = loadImage('assets/enterbutton.png');
   fromstart = loadImage('assets/fromstart.png');
-  //compliment1 = loadImage('assets/compliment1.png');
-  //compliment2 = loadImage('assets/compliment2.png');
-  //compliment3 = loadImage('assets/compliment3.png');
+
   remake = loadImage('assets/remake.png');
   erase = loadImage('assets/erase.png');
 
@@ -212,8 +233,6 @@ function preload() {
 
 function setup() {
   createCanvas(1280, 960);
-  
-
   textFont(myFont);
 
   const now = new Date();
@@ -254,7 +273,6 @@ handpose.on("predict", results => {
 
 }
 
-
 function draw() {
   if (page === 1){
     image(first, 0, 0, width, height);
@@ -274,52 +292,24 @@ function draw() {
   }
   else if (page === 2) {
     image(howto1withbutton, 0, 0, width, height);
+    
   }
 
   else if (page === 3) {
-    image(howto2withbutton, 0, 0, width, height);
+  image(howto2withbutton, 0, 0, width, height);
+
   }
 
   else if (page === 4) {
     image(howto3withbutton, 0, 0, width, height);
-    if (hands.length > 0) {
-      drawKeypoints();
-      fill(255);
-      textSize(120);
-      textAlign(CENTER, CENTER);
-      text("잘했어요!!", width / 3, height / 3);
-
-}
   }
 
   else if (page === 5) {
     image(howto4withbutton, 0, 0, width, height);
-    drawKeypoints();
-  
-      if (hands.length > 0) {
-    let hand = hands[0];
-    let landmarks = hand.landmarks;
-    let palm = landmarks[0];
-
-    const gesture = GE.estimate(landmarks, 8.5);  // fingerpose estimate
-
-    let isFistNow = false;
-
-    if (gesture.gestures.length > 0) {
-      const best = gesture.gestures.reduce((p, c) => p.score > c.score ? p : c);
-      isFistNow = best.name === "fist";
-    }
-
-    if (isFistNow && !wasFist) {
-      page = 6;  // 다음 페이지로 이동
-    }
-    wasFist = isFistNow;
-  }
-  }
-
-  else if (page === 6) {
-  image(howto5withbutton, 0, 0, width, height);
+   if (hands.length > 0) {
   drawKeypoints();
+}
+    drawKeypoints();
 
   let tutorialWord = ['ㅅ', 'ㅜ', 'ㅍ'];
 
@@ -343,7 +333,7 @@ function draw() {
         letters.push({
           char: tutorialWord[currentIndex],
           x: mirroredPalmX - 25,
-          y: palmCenter[1]-20,
+          y: palm[1] - 25,
           fade: 0,
           targetFade: 0,
           touchTime: 0
@@ -375,25 +365,25 @@ function draw() {
     fill(255);
     textSize(80);
     fill(255);
-    text("다시 손을 펴 다른 곳에 찍어보세요.", 700,450);
+    text("베리굿! 다른 곳에도 찍어볼까요?", 700,450);
   }
 
   if (currentIndex == 2){
     fill(255);
     textSize(80);
-    text("잘하셨어요!", 700,450);
+    text("감 잡았네요!", 700,450);
   }
 
   if (currentIndex === tutorialWord.length) {
     fill(255);
     textSize(80);
-    text("좋아요.", 640,450);
-    text("이제 숲을 만들어볼까요?", 640,550);
+    text("좋아요!", 640,450);
+    text("이제 나만의 한글숲을 만들러 가볼까요?", 640,550);
 
   }
 }
 
-  else if(page === 7){
+  else if(page === 6){
     image(namewithbutton, 0, 0, width, height);
     
     if (!input) {
@@ -418,12 +408,12 @@ function draw() {
     }
 
   }
-  else if(page === 8){
+  else if(page === 7){
     image(moodwithbutton, 0, 0, width, height);
     input.remove();
     currentIndex = 0;
   }
-  else if(page === 9){
+  else if(page === 8){
     mirroredX = null;
     palmY = null;
     palmCenter = null;
@@ -484,18 +474,16 @@ function draw() {
     textAlign(CENTER, TOP);
     fill(themeColor); // 텍스트 색
 
-    // 지우기
-    text("지우기", width / 2, 23);
-    text("(Space)", width / 2, 53);
+    if(!showQRCanvas){
+      // 지우기
+      text("한획 지우려면", 140, 23);
+      text("Space 버튼!", 140, 63);
 
-    // 다시 만들기
-    textAlign(CENTER, CENTER);
-    text("다시 만들기", width - 115, 50);
-
-    // 처음부터
-    text("처음부터", 85, 50);
-
-
+      // 설명
+      textAlign(CENTER, CENTER);
+      text("내 이름으로 한글숲을 만들어봅시다!", width / 2 + 300, 50);
+    }
+/*
     //페이지 9 하단에 이름 + 날짜 출력
     fill(255);
     textSize(100);
@@ -506,8 +494,9 @@ function draw() {
     let currentDateString = today2.getFullYear() + "." + nf(today2.getMonth() + 1, 2) + "." + nf(today2.getDate(), 2);
 
     text(userName + "의 한글숲 - " + currentDateString, width / 2, height - 20);
-    
-    if (currentIndex == 0 && showStartGuide) {
+*/    
+
+    if (currentIndex == 0 && showStartGuide && !showQRCanvas) {
     fill(255);
     textSize(70);
     text("주먹을 쥐었다 피면서 글자를 찍어보세요!", width / 2, 300);
@@ -533,7 +522,7 @@ function draw() {
       getFinishStage0 = false;
     }
 
-    if(finishStage0 && (textTime < second()) && (second() < (textTime + 5))){
+    if(finishStage0 && (textTime < second()) && (second() < (textTime + 5)) && !showQRCanvas){
       fill(255);
       textSize(80);
       text("손을 흔들어보세요!", 640, 300);
@@ -559,7 +548,7 @@ function draw() {
       }
     }
 
-    if(finishStage1 && (textTime1 < second()) && (second() < (textTime1 + 5))){
+    if(finishStage1 && (textTime1 < second()) && (second() < (textTime1 + 5)) && !showQRCanvas){
       fill(255);
       textSize(80);
       text("손을 흔들어보세요!", 640, 300);
@@ -606,7 +595,7 @@ function draw() {
   wasFist = isFist;
 }
 
-  if (page === 9 && finishStage1 && !qrGenerated ) {
+  if (page === 8 && finishStage1 && !qrGenerated && !showQRCanvas) {
     fill(255);
     textSize(36);
     textAlign(CENTER, CENTER);
@@ -623,7 +612,7 @@ if (qrGenerated && qrCanvas) {
 }
 
 // 다른 페이지로 가면 버튼 제거
-if (page !== 9) {
+if (page !== 8) {
   if (generateQRButton) {
     generateQRButton.remove();
     generateQRButton = null;
@@ -634,7 +623,7 @@ if (page !== 9) {
   }
 }
 
-  // 손 중심과 손바닥으로 꽃 이미지 전환 트리거
+// 손 중심과 손바닥으로 꽃 이미지 전환 트리거
 for (let obj of letters) {
   if (hands.length > 0) {
     let hand = hands[0];
@@ -667,8 +656,9 @@ for (let obj of letters) {
       }
     }
   }
-}
 
+
+}
     
 
     // 렌더링
@@ -695,21 +685,31 @@ for (let obj of letters) {
         tint(255, obj.imageFade);
 
         let dx = 0, dy = 0;
-        image(img, obj.x - 200 + dx, obj.y - 200 + dy, 400, 400);
+        image(img, obj.x - 170 + dx, obj.y - 170 + dy, 400, 400);
 
-        if (finishStage1 && obj.stage === 2) {
+        if (finishStage1 && obj.stage === 2 && !showQRCanvas) {
           let shakeTime = millis() - obj.shakeStart;
-          if (shakeTime < 2000) {
+          if(selected == '낭만' || selected == '설렘'){
+            time = 3000;
+          }
+          if (shakeTime < time) {
             dx = random(-3, 3);
             dy = random(-3, 3);
-            image(img, obj.x - 200 + dx, obj.y - 200 + dy, 400, 400);
+            image(img, obj.x - 170 + dx, obj.y - 170 + dy, 400, 400);
             imgFade = lerp(imgFade, 255, 0.1);
+            if(selected == '낭만' || selected == '설렘'){
+              if (shakeTime > 1500) {
+                let t = (shakeTime - 1500) / 1500;            
+                let eased = exp(-4 * t);          
+                imgFade = 255 * eased;
+              }
+            }
             push();
             tint(255, imgFade);
 
             if(selected == '낭만' || selected == '설렘'){
               for (let i = 0; i < 6; i++) {
-              image(imgEffect, obj.x + radius[i] * cos(angle[i]) - 60, obj.y + radius[i] * sin(angle[i]) - 60, 250, 250);
+              image(imgEffect, obj.x + radius[i] * cos(angle[i]) - 60, obj.y + radius[i] * sin(angle[i]) - 60, 220, 220);
               }
 
             }
@@ -728,15 +728,69 @@ for (let obj of letters) {
         pop();
       }
     }
+    if(showQRCanvas){
+      uploadCanvasAndMakeQR();
+      page++;
+    }
+  } else if(page === 9){
+    background(240);
+
+
+    if(!qrGenerated){
+      background(240);
+      fill(0);
+      textSize(70);
+      text("로딩 중", width / 2, 300);
+      translate(width / 2, height / 2); // 중앙으로 이동
+
+      let radius = 40;
+
+      for (let i = 0; i < numDots; i++) {
+        let angle = (360 / numDots) * i + angleOffset;
+        let x = cos(angle) * radius;
+        let y = sin(angle) * radius;
+
+        // 투명도 조절로 부드럽게 회전 느낌
+        let alpha = map(i, 0, numDots, 50, 255);
+        fill(100, 150, 255, alpha);
+        noStroke();
+        ellipse(x, y, 15);
+      }
+
+      // 회전 애니메이션
+      angleOffset += 0.1; // 속도 조절 가능
+    }
+    else{
+
+      //페이지 9 하단에 이름 + 날짜 출력
+      fill(0);
+      textSize(100);
+      textAlign(CENTER, BOTTOM);
+
+      // 날짜 정보 세팅 (미리 한 번 선언 필요)
+      let today2 = new Date();
+      let currentDateString = today2.getFullYear() + "." + nf(today2.getMonth() + 1, 2) + "." + nf(today2.getDate(), 2);
+
+      text(userName + "의 한글숲 - " + currentDateString, width / 2, height - 20);
+
+      if (qrGenerated && qrCanvas) {
+        fill(50, 168, 82);
+        rect(width/2 - 220, height/2 - 220, 440, 440);
+        image(qrCanvas, width/2 - 200 , height/2 - 200 , 400, 400);  // 생성된 QR 표시
+      }
+
+    }
+
   }
+  image(squirrel, mouseX-20, mouseY-20, 200, 200); 
 }
 
 function keyPressed() {
   // 왼쪽 방향키 눌렀을 때 뒤로가기 기능
-  if (keyCode === LEFT_ARROW && page >= 2 && page <= 8) {
+  if (keyCode === BACKSPACE && page >= 2 && page < 6 && page == 7) {
     page--;
 
-    if (page < 9 && input) {
+    if (page < 8 && input) {
       input.remove();
       input = null;
     }
@@ -746,18 +800,21 @@ function keyPressed() {
     if (page === 1) {
       page = 2; // 제목 화면에서 howto1으로
     }
-    else if (page >= 2 && page <= 5) {
-      page++; // howto1~howto5 순차적으로 넘김
+    else if (page >= 2 && page <= 4) {
+      page++; // howto1~howto4 순차적으로 넘김
     }
-    else if (page === 6) {
-      page = 7; // howto5 다음 단계로 (자모 인식 or 이름 입력 단계)
+    else if (page === 5) {
+      page = 6; // howto4 다음 단계로 (자모 인식 or 이름 입력 단계)
     }
-    else if (page === 7 && userName !== "") {
-      page = 8; // 이름 입력 후 다음 단계로
+    else if (page === 6 && userName !== "") {
+      page = 7; // 이름 입력 후 다음 단계로
       console.log(userName);
     }
+    else if (page === 8 && finishStage1 && !qrGenerated){
+      showQRCanvas = true;
+    }
   }
-  if (page === 9 && key === ' ') {
+  if (page === 8 && key === ' ') {
     if (letters.length > 0) {
       letters.pop();
       currentIndex--;
@@ -768,7 +825,7 @@ function keyPressed() {
 
 function mousePressed() {
 
-  if(page === 8){
+  if(page === 7){
 
     if (mouseX > 28 && mouseX < 418 && mouseY > 168 && mouseY < 480) {
       selected = '열정';
@@ -860,43 +917,48 @@ function mousePressed() {
     }
     
   }
-if (page === 9) {
-  // "다시 만들기" 클릭 시 (오른쪽 위, 중심: width - 115, 50)
-  if (
-    mouseX > width - 115 - 65 && mouseX < width - 115 + 65 &&
-    mouseY > 50 - 30 && mouseY < 50 + 30
-  ) {
-    page = 8;
-    letters = [];
-    currentIndex = 0;
-    finishStage0 = false;
-    finishStage1 = false;
-    if (mySound1.isPlaying()) mySound1.stop();
-    if (mySound2.isPlaying()) mySound2.stop();
-    if (mySound3.isPlaying()) mySound3.stop();
-  }
-
-  // "처음부터" 클릭 시 (왼쪽 위, 중심: 85, 50)
-  if (
-    mouseX > 85 - 65 && mouseX < 85 + 65 &&
-    mouseY > 50 - 30 && mouseY < 50 + 30
-  ) {
-    page = 1;
-    letters = [];
-    currentIndex = 0;
-    userName = "";
-    selected = "";
-    if (mySound1.isPlaying()) mySound1.stop();
-    if (mySound2.isPlaying()) mySound2.stop();
-    if (mySound3.isPlaying()) mySound3.stop();
-  }
+if (page === 8) {
+ 
   //qr생성
     if (
-    page === 9 && finishStage1 && !qrGenerated &&
+    page === 8 && finishStage1 && !qrGenerated &&
     mouseX > width / 2 - 200 && mouseX < width / 2 + 200 &&
     mouseY > height - 240 && mouseY < height - 160
   ) {
-    uploadCanvasAndMakeQR();
+    showQRCanvas = true;
+  }
+}
+// 페이지 공통: Back/Next 버튼 클릭 처리
+if (
+  mouseX >= 34 && mouseX <= 34 + 326 &&
+  mouseY >= 837 && mouseY <= 837 + 110
+) {
+  if (page > 1) {
+    page--;
+    console.log("⬅ Back 버튼 클릭됨, 현재 페이지:", page);
+  }
+}
+const nextX = 986;
+const nextW = 326;
+const nextY = 837;
+const nextH = 110;
+
+if (
+  mouseX >= nextX - nextW / 2 && mouseX <= nextX + nextW / 2 &&
+  mouseY >= nextY && mouseY <= nextY + nextH
+) {
+  if (page < 9) {
+    page++;
+    console.log("➡ Next 버튼 클릭됨, 현재 페이지:", page);
+  }
+}
+if (page === 1) {
+  if (
+    mouseX >= 544 && mouseX <= 828 &&
+    mouseY >= 698 && mouseY <= 808
+  ) {
+    page++;
+    console.log("첫 페이지 → 다음 페이지로 이동!");
   }
 }
 }
@@ -952,6 +1014,7 @@ function drawKeypoints() {
   for (let hand of hands) {
     // 관절 이미지 선택
     let landmarkImg;
+
     if (["사랑", "희망"].includes(selected)) {
       landmarkImg = imgLeaves;
       stroke(80, 55, 35, 100); // 연두색 선
@@ -959,9 +1022,14 @@ function drawKeypoints() {
     else if( ["열정", "청춘"].includes(selected)){
       landmarkImg = butter;
       stroke(227, 95, 139, 100);// 분홍색 선
-    } else {
+    } 
+    else if( ["낭만", "설렘"].includes(selected)){
       landmarkImg = imgStar;
       stroke(150, 150, 150, 80); // 회색 선
+    }
+    else {
+      landmarkImg = butter;
+      stroke(227, 95, 139, 100);// 분홍색 선
     }
 
     strokeWeight(2);
