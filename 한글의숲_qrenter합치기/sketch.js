@@ -389,10 +389,6 @@ function draw() {
 
   else if(page === 6){
     image(namewithbutton, 0, 0, width, height);
-    textSize(55);
-    text("한글만 입력해주세요!", 250,500);
-    textSize(40);
-    text("두 세 글자를 추천합니다 :)", 900,600);
     
     if (!input) {
       input = createInput();
@@ -422,13 +418,17 @@ function draw() {
     });
 
     }
-
   }
-  else if(page === 7){
+    
+  else if (page === 7) {
     image(moodwithbutton, 0, 0, width, height);
-    input.remove();
+    if (input) {
+      input.remove();
+      input = null; // 여기 추가!
+    }
     currentIndex = 0;
   }
+    
   else if(page === 8){
     mirroredX = null;
     palmY = null;
@@ -837,12 +837,12 @@ for (let obj of letters) {
     }
 
   }
-  image(squirrel, mouseX-20, mouseY-20, 200, 200); 
+  image(squirrel, mouseX-30, mouseY-30, 100, 100); 
 }
 
 function keyPressed() {
   // 왼쪽 방향키 눌렀을 때 뒤로가기 기능
-  if (keyCode === BACKSPACE && page >= 2 && page < 6 && page == 7) {
+  if (keyCode === BACKSPACE && page >= 2 && page == 7) {
     page--;
 
     if (page < 8 && input) {
