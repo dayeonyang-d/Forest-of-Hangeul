@@ -109,6 +109,15 @@ let angleOffset = 0;
 
 let capturedImage;
 
+let creditsY = 600;  // 처음 글씨 시작
+let creditsText = [
+  "감사합니다!",
+  "한글의 숲을 완성했어요.",
+  "이름 속 한글의 아름다움을 간직하세요 🌿",
+  "© 2025 Hangeul Forest"
+];
+
+
 const CHOSUNG = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 const JUNGSUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
 const JONGSUNG = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
@@ -826,13 +835,25 @@ for (let obj of letters) {
       text(userName + "의 한글숲 - " + currentDateString, width / 2, height - 20);
 
       // 이미지 띄우기
-      image(capturedImage,width/2 - 150,10,300,225);
+      image(capturedImage,width/2 - 350,10,300,225);
 
       if (qrGenerated && qrCanvas) {
         fill(50, 168, 82);
-        rect(width/2 - 220, height/2 - 220, 440, 440);
-        image(qrCanvas, width/2 - 200 , height/2 - 200 , 400, 400);  // 생성된 QR 표시
+        rect(width/2 - 420, height/2 - 220, 440, 440);
+        image(qrCanvas, width/2 - 400 , height/2 - 200 , 400, 400);  // 생성된 QR 표시
       }
+
+      // 🎬 오른쪽 엔딩 크레딧
+      push();
+      fill(0);
+      textSize(40);
+      textAlign(LEFT, CENTER);
+      let creditX = width - 500; // 오른쪽 위치
+      for (let i = 0; i < creditsText.length; i++) {
+        text(creditsText[i], creditX, creditsY + i * 60);
+      }
+      creditsY -= 1; // 천천히 위로 올라감
+      pop();
 
     }
 
