@@ -771,12 +771,28 @@ for (let obj of letters) {
 
 
   if (page === 8 && finishStage1 && !qrGenerated && !showQRCanvas) {
+    let textX = width / 2;
+    let textY = height - 100;
+    let baseSize = 60;
+    let hoverSize = 90;
+    textSize(baseSize);
+    let textW = textWidth("QR로 내 숲 저장하기!");
+    let textH = baseSize;
+
+    let isHovering = (
+      mouseX > textX - textW / 2 &&
+      mouseX < textX + textW / 2 &&
+      mouseY > textY - textH / 2 &&
+      mouseY < textY + textH / 2
+    );
+    let currentTextSize = isHovering ? hoverSize : baseSize;
+    textSize(currentTextSize);
     fill(255);
-    textSize(100);
     textAlign(CENTER, CENTER);
-    text("QR로 내 숲 저장하기!", width / 2, height - 100);
-    
+    text("QR로 내 숲 저장하기!", textX, textY);
   }
+
+
     if(showQRCanvas){
       //페이지 9 하단에 이름 + 날짜 출력
       fill(255);
@@ -835,12 +851,12 @@ for (let obj of letters) {
       text(userName + "의 한글숲 - " + currentDateString, width / 2, height - 20);
 
       // 이미지 띄우기
-      image(capturedImage,width/2 - 350,10,300,225);
+      image(capturedImage, 170, 30, 300, 225);
 
       if (qrGenerated && qrCanvas) {
         fill(50, 168, 82);
-        rect(width/2 - 420, height/2 - 220, 440, 440);
-        image(qrCanvas, width/2 - 400 , height/2 - 200 , 400, 400);  // 생성된 QR 표시
+        rect(100, height / 2 - 220, 440, 440);  // 배경
+        image(qrCanvas, 120, height / 2 - 200, 400, 400);
       }
 
       // 🎬 오른쪽 엔딩 크레딧
@@ -848,7 +864,7 @@ for (let obj of letters) {
       fill(0);
       textSize(40);
       textAlign(LEFT, CENTER);
-      let creditX = width - 500; // 오른쪽 위치
+      let creditX = width - 450; // 오른쪽 위치
       for (let i = 0; i < creditsText.length; i++) {
         text(creditsText[i], creditX, creditsY + i * 60);
       }
