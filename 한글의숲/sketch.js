@@ -851,7 +851,7 @@ for (let obj of letters) {
       text(userName + "의 한글숲 - " + currentDateString, width / 2, height - 20);
 
       // 이미지 띄우기
-      image(capturedImage, 170, 30, 300, 225);
+      image(capturedImage, 150, 30, 300, 225);
 
       if (qrGenerated && qrCanvas) {
         fill(50, 168, 82);
