@@ -879,10 +879,10 @@ for (let obj of letters) {
 
 function keyPressed() {
   // 왼쪽 방향키 눌렀을 때 뒤로가기 기능
-  if (keyCode === BACKSPACE && page >= 2 && page <= 7) {
+  if (keyCode === BACKSPACE && page >= 2 && page <= 6) {
     page--;
 
-    if (page < 8 && input) {
+    if (page < 7 && input) {
       input.remove();
       input = null;
     }
