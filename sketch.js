@@ -290,10 +290,6 @@ function draw() {
   if (page === 1){
     image(first, 0, 0, width, height);
 
-    if (!startSound.isPlaying()) {
-      startSound.loop();  
-    }
-
     // 나비: 좌우로 흔들리듯 이동 
     butterflyOffset += 0.05;
     image(butterfly, butterflyX + sin(butterflyOffset) * 30 - 40, butterflyY - 40, 160, 160);
@@ -879,10 +875,10 @@ for (let obj of letters) {
 
 function keyPressed() {
   // 왼쪽 방향키 눌렀을 때 뒤로가기 기능
-  if (keyCode === BACKSPACE && page >= 2 && page <= 6) {
+  if (keyCode === BACKSPACE && page >= 2 && page <= 5) {
     page--;
 
-    if (page < 7 && input) {
+    if (page < 6 && input) {
       input.remove();
       input = null;
     }
@@ -891,6 +887,7 @@ function keyPressed() {
   if (keyCode === ENTER) {
     if (page === 1) {
       page = 2; // 제목 화면에서 howto1으로
+      startSound.loop();
     }
     else if (page >= 2 && page <= 4) {
       page++; // howto1~howto4 순차적으로 넘김
@@ -1028,6 +1025,11 @@ if (
   if (page > 1) {
     page--;
     console.log("⬅ Back 버튼 클릭됨, 현재 페이지:", page);
+    if (page < 6 && input) {
+      input.remove();
+      input = null;
+    }
+
   }
 }
 const nextX = 986;
@@ -1051,6 +1053,7 @@ if (page === 1) {
   ) {
     page++;
     console.log("첫 페이지 → 다음 페이지로 이동!");
+    startSound.loop();
   }
 }
 }
